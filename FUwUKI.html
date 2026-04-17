@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ブラッシング・ふうき</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #fce4ec;
+            margin: 0;
+            padding: 50px 20px;
+        }
+        #game-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+            box-sizing: border-box; /* スマホ画面からはみ出さないための調整 */
+        }
+        h1 {
+            color: #d81b60;
+            font-size: 1.5rem;
+        }
+        #score-board {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        /* 画像のスタイルを調整 */
+        #cat-display {
+            width: 200px;
+            height: 200px;
+            object-fit: cover; /* 画像が歪まないように切り抜く */
+            border-radius: 10px; /* 角を少し丸くする */
+            margin: 20px 0;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+        .brush-effect {
+            transform: scale(1.1) rotate(5deg);
+        }
+        #status-message {
+            font-size: 1.1rem;
+            font-weight: bold;
+            height: 1.5rem;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            transition: background-color 0.2s, transform 0.1s;
+            touch-action: manipulation; /* スマホでのダブルタップ拡大を防ぐ */
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        #brush-btn {
+            background-color: #ff9800;
+            color: white;
+            box-shadow: 0 4px 0 #e65100;
+        }
+        #brush-btn:hover {
+            background-color: #f57c00;
+        }
+        #restart-btn {
+            background-color: #2196f3;
+            color: white;
+            box-shadow: 0 4px 0 #0d47a1;
+            display: none;
+        }
+        #restart-btn:hover {
+            background-color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>ブラッシング・ふうき</h1>
+    <div id="score-board">スコア: <span id="score">0</span></div>
+    
+    <img id="cat-display" src="normal.png" alt="猫の画像">
+    
+    <p id="status-message">機嫌がいいぞ！</p>
+    
+    <button id="brush-btn">ブラシをかける！ 🪮</button>
+    <button id="restart-btn">もう一度遊ぶ 🔄</button>
+</div>
+
+<script>
+    let score = 0;
+    let isWarning = false;
+    let isGameOver = false;
+    let stateTimer;
+
+    const scoreEl = document.getElementById('score');
+    const catEl = document.getElementById('cat-display');
+    const statusEl = document.getElementById('status-message');
+    const brushBtn = document.getElementById('brush-btn');
+    const restartBtn = document.getElementById('restart-btn');
+
+    // ゲーム初期化
+    function startGame() {
+        score = 0;
+        isWarning = false;
+        isGameOver = false;
+        scoreEl.innerText = score;
+        brushBtn.style.display = 'inline-block';
+        restartBtn.style.display = 'none';
+        setSafeState();
+    }
+
+    // 安全な状態
+    function setSafeState() {
+        if(isGameOver) return;
+        isWarning = false;
+        catEl.src = 'normal.png'; // 通常の画像
+        statusEl.innerText = '機嫌がいいぞ！';
+        statusEl.style.color = '#4caf50';
+
+        const timeToWarning = Math.random() * 2000 + 1000;
+        clearTimeout(stateTimer);
+        stateTimer = setTimeout(setWarningState, timeToWarning);
+    }
+
+    // 警戒状態
+    function setWarningState() {
+        if(isGameOver) return;
+        isWarning = true;
+        catEl.src = 'warning.png'; // 警戒中の画像
+        statusEl.innerText = '...ん？（今触ると危険！）';
+        statusEl.style.color = '#f44336';
+
+        const timeToSafe = Math.random() * 1000 + 500;
+        clearTimeout(stateTimer);
+        stateTimer = setTimeout(setSafeState, timeToSafe);
+    }
+
+    // ボタンクリック時の処理
+    brushBtn.addEventListener('click', () => {
+        if(isGameOver) return;
+
+        if(isWarning) {
+            // ゲームオーバー時
+            isGameOver = true;
+            clearTimeout(stateTimer);
+            catEl.src = 'angry.png'; // 怒った画像
+            statusEl.innerText = 'シャーッ！！噛まれた！';
+            statusEl.style.color = '#b71c1c';
+            brushBtn.style.display = 'none';
+            restartBtn.style.display = 'inline-block';
+        } else {
+            // 成功時
+            score += 1;
+            scoreEl.innerText = score;
+            
+            catEl.classList.add('brush-effect');
+            catEl.src = 'happy.png'; // 喜んでいる画像
+            
+            setTimeout(() => {
+                catEl.classList.remove('brush-effect');
+                if(!isWarning && !isGameOver) catEl.src = 'normal.png'; // すぐに通常に戻す
+            }, 150);
+        }
+    });
+
+    restartBtn.addEventListener('click', startGame);
+
+    startGame();
+</script>
+
+</body>
+</html>
