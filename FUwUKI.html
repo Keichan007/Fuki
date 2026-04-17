@@ -89,7 +89,7 @@
     <h1>ブラッシング・ふうき</h1>
     <div id="score-board">スコア: <span id="score">0</span></div>
     
-    <img id="cat-display" src="normal.png" alt="猫の画像">
+    <img id="cat-display" src="normal.PNG" alt="猫の画像">
     
     <p id="status-message">機嫌がいいぞ！</p>
     
@@ -124,7 +124,7 @@
     function setSafeState() {
         if(isGameOver) return;
         isWarning = false;
-        catEl.src = 'normal.png'; // 通常の画像
+        catEl.src = 'normal.PNG'; // 通常の画像
         statusEl.innerText = '機嫌がいいぞ！';
         statusEl.style.color = '#4caf50';
 
@@ -137,7 +137,7 @@
     function setWarningState() {
         if(isGameOver) return;
         isWarning = true;
-        catEl.src = 'warning.png'; // 警戒中の画像
+        catEl.src = 'warning.PNG'; // 警戒中の画像
         statusEl.innerText = '...ん？（今触ると危険！）';
         statusEl.style.color = '#f44336';
 
@@ -154,7 +154,7 @@
             // ゲームオーバー時
             isGameOver = true;
             clearTimeout(stateTimer);
-            catEl.src = 'angry.png'; // 怒った画像
+            catEl.src = 'angry.PNG'; // 怒った画像
             statusEl.innerText = 'シャーッ！！噛まれた！';
             statusEl.style.color = '#b71c1c';
             brushBtn.style.display = 'none';
@@ -165,11 +165,11 @@
             scoreEl.innerText = score;
             
             catEl.classList.add('brush-effect');
-            catEl.src = 'happy.png'; // 喜んでいる画像
+            catEl.src = 'happy.PNG'; // 喜んでいる画像
             
             setTimeout(() => {
                 catEl.classList.remove('brush-effect');
-                if(!isWarning && !isGameOver) catEl.src = 'normal.png'; // すぐに通常に戻す
+                if(!isWarning && !isGameOver) catEl.src = 'normal.PNG'; // すぐに通常に戻す
             }, 150);
         }
     });
